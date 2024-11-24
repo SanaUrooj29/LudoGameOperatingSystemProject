@@ -52,7 +52,9 @@ int tokenIndex = 0; // Keeps track of token initialization
 
 CellType board[BOARD_SIZE][BOARD_SIZE];
 
-int diceRoll = 0;
+int diceRolls[3] = {0, 0, 0};
+int rollCount = 0;
+bool canRollAgain = true;
 
 SDL_Texture* diceTextures[6];
 int currentDiceRoll = 1;
@@ -385,23 +387,20 @@ void renderStatistics(SDL_Renderer* renderer) {
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
 
-    // Generate dice roll only once per frame
-    if (diceRoll == 0) {
-        diceRoll = rand() % 6 + 1;
-    }
 
-    char buffer[20];
-    sprintf(buffer, "Dice Roll: %d", diceRoll);
+    // Display all dice rolls
+    char buffer[50];
+    sprintf(buffer, "Dice Rolls: %d %d %d", diceRolls[0], diceRolls[1], diceRolls[2]);
     surface = TTF_RenderText_Solid(font, buffer, (SDL_Color){RED.r, RED.g, RED.b, RED.a});
     if (!surface) {
-        printf("Failed to render dice roll text: %s\n", TTF_GetError());
+        printf("Failed to render dice rolls text: %s\n", TTF_GetError());
         TTF_CloseFont(font);
         return;
     }
 
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (!texture) {
-        printf("Failed to create dice roll texture: %s\n", SDL_GetError());
+        printf("Failed to create dice rolls texture: %s\n", SDL_GetError());
         SDL_FreeSurface(surface);
         TTF_CloseFont(font);
         return;
@@ -427,13 +426,34 @@ void renderStatistics(SDL_Renderer* renderer) {
         DICE_SIZE
     };
 
-    textRect.y += 40;
+    textRect.y += 80;
     SDL_RenderCopy(renderer, texture, NULL, &textRect);
     SDL_RenderCopy(renderer, diceTextures[currentDiceRoll - 1], NULL, &diceRect);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
 
     TTF_CloseFont(font);
+}
+
+// functionality to handle dice rolling logic
+void handleDiceRoll() {
+    if (canRollAgain) {
+        currentDiceRoll = (rand() % 6) + 1;
+        diceRolls[rollCount] = currentDiceRoll;
+        rollCount++;
+
+        if (currentDiceRoll != 6 || rollCount == 3) {
+            canRollAgain = false;
+        }
+
+        if (rollCount == 3 && diceRolls[0] == 6 && diceRolls[1] == 6 && diceRolls[2] == 6) {
+            // Discard the rolls if three 6's are rolled
+            diceRolls[0] = 0;
+            diceRolls[1] = 0;
+            diceRolls[2] = 0;
+            rollCount = 0;
+        }
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -524,8 +544,10 @@ int main(int argc, char* argv[]) {
                 int dx = mouseX - centerX;
                 int dy = mouseY - centerY;
                 if (dx*dx + dy*dy <= CIRCLE_RADIUS*CIRCLE_RADIUS) {
-                    isRolling = true;
-                    rollStartTime = SDL_GetTicks();
+                    if (canRollAgain) {
+                        isRolling = true;
+                        rollStartTime = SDL_GetTicks();
+                    }
                 }
             }
         }
@@ -535,9 +557,9 @@ int main(int argc, char* argv[]) {
             if (currentTime - rollStartTime < 1000) {
                 // Roll the dice for 1 second
                 currentDiceRoll = (rand() % 6) + 1;
-                diceRoll = currentDiceRoll;
             } else {
                 isRolling = false;
+                handleDiceRoll();
             }
         }
 
