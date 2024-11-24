@@ -122,20 +122,63 @@ void initializeBoard() {
 
 }
 
-void renderTokensInHome(SDL_Renderer* renderer, SDL_Texture* token, int startX, int startY) {
-    SDL_Rect tokenPos[4];
 
-    // Define positions for the 4 tokens in the corners of the 4x4 grid
-    tokenPos[0] = (SDL_Rect){startX, startY, TOKEN_SIZE, TOKEN_SIZE};                   // Top-left
-    tokenPos[1] = (SDL_Rect){startX + 3 * CELL_SIZE, startY, TOKEN_SIZE, TOKEN_SIZE}; // Top-right
-    tokenPos[2] = (SDL_Rect){startX, startY + 3 * CELL_SIZE, TOKEN_SIZE, TOKEN_SIZE}; // Bottom-left
-    tokenPos[3] = (SDL_Rect){startX + 3 * CELL_SIZE, startY + 3 * CELL_SIZE, TOKEN_SIZE, TOKEN_SIZE}; // Bottom-right
-
-    // Render each token
+void initializeTokens() {
+    // Red tokens
     for (int i = 0; i < 4; i++) {
-        SDL_RenderCopy(renderer, token, NULL, &tokenPos[i]);
+        tokens[tokenIndex++] = (Token){
+            .x = CELL_SIZE * (i % 2 == 0 ? 1 : 4),
+            .y = CELL_SIZE * (i < 2 ? 1 : 4),
+            .color = RED
+        };
+    }
+
+    // Green tokens
+    for (int i = 0; i < 4; i++) {
+        tokens[tokenIndex++] = (Token){
+            .x = CELL_SIZE * (i % 2 == 0 ? 10 : 13),
+            .y = CELL_SIZE * (i < 2 ? 1 : 4),
+            .color = GREEN
+        };
+    }
+
+    // Blue tokens
+    for (int i = 0; i < 4; i++) {
+        tokens[tokenIndex++] = (Token){
+            .x = CELL_SIZE * (i % 2 == 0 ? 1 : 4),
+            .y = CELL_SIZE * (i < 2 ? 10 : 13),
+            .color = BLUE
+        };
+    }
+
+    // Yellow tokens
+    for (int i = 0; i < 4; i++) {
+        tokens[tokenIndex++] = (Token){
+            .x = CELL_SIZE * (i % 2 == 0 ? 10 : 13),
+            .y = CELL_SIZE * (i < 2 ? 10 : 13),
+            .color = YELLOW
+        };
     }
 }
+
+
+
+void renderTokens(SDL_Renderer* renderer, SDL_Texture* redToken, SDL_Texture* greenToken, SDL_Texture* blueToken, SDL_Texture* yellowToken) {
+    SDL_Texture* tokenTextures[] = {redToken, greenToken, blueToken, yellowToken};
+
+    for (int i = 0; i < 16; i++) {
+        SDL_Rect tokenRect = {
+            tokens[i].x + (CELL_SIZE - TOKEN_SIZE) / 2,
+            tokens[i].y + (CELL_SIZE - TOKEN_SIZE) / 2,
+            TOKEN_SIZE,
+            TOKEN_SIZE
+        };
+
+        SDL_Texture* currentTexture = tokenTextures[i / 4]; // Select texture based on token group
+        SDL_RenderCopy(renderer, currentTexture, NULL, &tokenRect);
+    }
+}
+
 
 
 
@@ -279,6 +322,7 @@ void renderBoard(SDL_Renderer* renderer, SDL_Texture* starTexture) {
                 SDL_RenderCopy(renderer, starTexture, NULL, &starRect);
             }
         }
+        
     }
 
     renderCenterTriangles(renderer);
@@ -380,6 +424,7 @@ int main(int argc, char* argv[]) {
     }
 
     initializeBoard();
+    initializeTokens();
 
     // Load star image
     SDL_Surface* starSurface = IMG_Load("assets/star.png");
@@ -432,10 +477,8 @@ int main(int argc, char* argv[]) {
         renderBoard(renderer, starTexture);
         renderStatistics(renderer);
 
-        renderTokensInHome(renderer, redToken, CELL_SIZE, CELL_SIZE);         // Red home
-        renderTokensInHome(renderer, greenToken, 10 * CELL_SIZE, CELL_SIZE);  // Green home
-        renderTokensInHome(renderer, blueToken, CELL_SIZE, 10 * CELL_SIZE);   // Blue home
-        renderTokensInHome(renderer, yellowToken, 10 * CELL_SIZE, 10 * CELL_SIZE); // Yellow home
+        renderTokens(renderer, redToken, greenToken, blueToken, yellowToken);
+        
 
         SDL_RenderPresent(renderer);
     }
