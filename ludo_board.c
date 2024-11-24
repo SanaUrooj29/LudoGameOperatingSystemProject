@@ -3,6 +3,8 @@
 #include <math.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <time.h>
+
 
 #define BOARD_WIDTH 800
 #define BOARD_HEIGHT 800
@@ -12,6 +14,8 @@
 #define BOARD_SIZE 15
 #define CELL_SIZE (BOARD_WIDTH / BOARD_SIZE)  
 #define TOKEN_SIZE (CELL_SIZE * 0.75)
+#define DICE_SIZE 60
+#define CIRCLE_RADIUS 50
 
 const SDL_Color RED = {255, 0, 0, 255};
 const SDL_Color GREEN = {0, 255, 0, 255};
@@ -49,6 +53,11 @@ int tokenIndex = 0; // Keeps track of token initialization
 CellType board[BOARD_SIZE][BOARD_SIZE];
 
 int diceRoll = 0;
+
+SDL_Texture* diceTextures[6];
+int currentDiceRoll = 1;
+bool isRolling = false;
+Uint32 rollStartTime = 0;
 
 void initializeBoard() {
     for (int i = 0; i < BOARD_SIZE; i++) {
@@ -161,6 +170,19 @@ void initializeTokens() {
     }
 }
 
+void loadDiceTextures(SDL_Renderer* renderer) {
+    char path[50];
+    for (int i = 1; i <= 6; i++) {
+        sprintf(path, "assets/Dice/dieWhite_border%d.png", i);
+        SDL_Surface* surface = IMG_Load(path);
+        if (!surface) {
+            printf("Failed to load dice image %d: %s\n", i, IMG_GetError());
+            exit(1);
+        }
+        diceTextures[i-1] = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+    }
+}
 
 
 void renderTokens(SDL_Renderer* renderer, SDL_Texture* redToken, SDL_Texture* greenToken, SDL_Texture* blueToken, SDL_Texture* yellowToken) {
@@ -385,8 +407,29 @@ void renderStatistics(SDL_Renderer* renderer) {
         return;
     }
 
+    // Draw black circle
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    for (int y = -CIRCLE_RADIUS; y <= CIRCLE_RADIUS; y++) {
+        for (int x = -CIRCLE_RADIUS; x <= CIRCLE_RADIUS; x++) {
+            if (x*x + y*y <= CIRCLE_RADIUS*CIRCLE_RADIUS) {
+                SDL_RenderDrawPoint(renderer, 
+                    BOARD_WIDTH + STATS_WIDTH/2 + x, 
+                    WINDOW_HEIGHT/2 + y);
+            }
+        }
+    }
+
+    // Draw dice
+    SDL_Rect diceRect = {
+        BOARD_WIDTH + STATS_WIDTH/2 - DICE_SIZE/2,
+        WINDOW_HEIGHT/2 - DICE_SIZE/2,
+        DICE_SIZE,
+        DICE_SIZE
+    };
+
     textRect.y += 40;
     SDL_RenderCopy(renderer, texture, NULL, &textRect);
+    SDL_RenderCopy(renderer, diceTextures[currentDiceRoll - 1], NULL, &diceRect);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
 
@@ -394,6 +437,11 @@ void renderStatistics(SDL_Renderer* renderer) {
 }
 
 int main(int argc, char* argv[]) {
+
+    srand(time(NULL));  // Seed the random number generator
+
+    
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL initialization failed: %s\n", SDL_GetError());
         return 1;
@@ -422,6 +470,8 @@ int main(int argc, char* argv[]) {
         printf("Renderer creation failed: %s\n", SDL_GetError());
         return 1;
     }
+
+    loadDiceTextures(renderer);
 
     initializeBoard();
     initializeTokens();
@@ -464,10 +514,30 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 quit = true;
-            } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_SPACE) {
-                    diceRoll = rand() % 6 + 1;
+            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int mouseX, mouseY;
+                SDL_GetMouseState(&mouseX, &mouseY);
+                
+                // Check if click is within the dice circle
+                int centerX = BOARD_WIDTH + STATS_WIDTH/2;
+                int centerY = WINDOW_HEIGHT/2;
+                int dx = mouseX - centerX;
+                int dy = mouseY - centerY;
+                if (dx*dx + dy*dy <= CIRCLE_RADIUS*CIRCLE_RADIUS) {
+                    isRolling = true;
+                    rollStartTime = SDL_GetTicks();
                 }
+            }
+        }
+
+        if (isRolling) {
+            Uint32 currentTime = SDL_GetTicks();
+            if (currentTime - rollStartTime < 1000) {
+                // Roll the dice for 1 second
+                currentDiceRoll = (rand() % 6) + 1;
+                diceRoll = currentDiceRoll;
+            } else {
+                isRolling = false;
             }
         }
 
@@ -476,13 +546,14 @@ int main(int argc, char* argv[]) {
 
         renderBoard(renderer, starTexture);
         renderStatistics(renderer);
-
         renderTokens(renderer, redToken, greenToken, blueToken, yellowToken);
-        
 
         SDL_RenderPresent(renderer);
     }
 
+    for (int i = 0; i < 6; i++) {
+        SDL_DestroyTexture(diceTextures[i]);
+    }
     SDL_DestroyTexture(starTexture);
     SDL_DestroyTexture(redToken);
     SDL_DestroyTexture(greenToken);
