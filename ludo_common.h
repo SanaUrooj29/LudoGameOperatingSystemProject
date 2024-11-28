@@ -10,7 +10,7 @@
 
 #define BOARD_WIDTH 800
 #define BOARD_HEIGHT 800
-#define STATS_WIDTH 200
+#define STATS_WIDTH 300
 #define WINDOW_WIDTH (BOARD_WIDTH + STATS_WIDTH)
 #define WINDOW_HEIGHT BOARD_HEIGHT
 #define BOARD_SIZE 15
@@ -39,6 +39,7 @@ typedef enum {
 typedef struct {
     int x, y;
     SDL_Color color;
+    bool moveable;
 } Token;
 
 extern CellType board[BOARD_SIZE][BOARD_SIZE];
@@ -53,6 +54,9 @@ extern bool isRolling;
 extern Uint32 rollStartTime;
 extern bool StartGame;
 extern int Players[4];
+extern int PlayerTurn;
+extern bool CLOCKWISE;
+extern bool COUNTERCLOCKWISE;
 
 #endif // LUDO_COMMON_H
 

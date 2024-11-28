@@ -11,6 +11,8 @@ void renderTokens(SDL_Renderer* renderer, SDL_Texture* redToken, SDL_Texture* gr
 void renderStatistics(SDL_Renderer* renderer);
 SDL_Texture* renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
 void renderTextTexture(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y);
+int PlayerTurnSelection();
+void TurnDirection();
 
 #endif // LUDO_RENDER_H
 

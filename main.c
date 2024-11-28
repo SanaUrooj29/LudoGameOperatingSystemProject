@@ -6,6 +6,9 @@
 
 
 bool StartGame = true;
+bool CLOCKWISE = false;
+bool COUNTERCLOCKWISE = false;
+int PlayerTurn = 0;
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
@@ -73,18 +76,29 @@ int main(int argc, char* argv[]) {
 
     bool quit = false;
     SDL_Event event;
+    bool waitingForTokenSelection = false;
 
     // For Anyone Reading -> This while loop is the gameloop
     // PollEvents-> Listens to all the events in the game
     // Main Methods -> RenderClear() and RenderPresent()
     
     while (!quit) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-            } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-                int mouseX, mouseY;
-                SDL_GetMouseState(&mouseX, &mouseY);
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            quit = true;
+        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            int mouseX, mouseY;
+            SDL_GetMouseState(&mouseX, &mouseY);
+            
+            if (waitingForTokenSelection) {
+                token_selection(&event, diceRolls);
+                if (tokens[PlayerTurn * 4 - 4].moveable || tokens[PlayerTurn * 4 - 3].moveable || 
+                    tokens[PlayerTurn * 4 - 2].moveable || tokens[PlayerTurn * 4 - 1].moveable) {
+                    waitingForTokenSelection = false;
+                    DiscardDiceRoll();
+                    PlayerTurnSelection();
+                }
+            } else {
                 int centerX = BOARD_WIDTH + STATS_WIDTH/2;
                 int centerY = WINDOW_HEIGHT/2;
                 int dx = mouseX - centerX;
@@ -97,16 +111,19 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+    }
 
-        if (isRolling) {
-            Uint32 currentTime = SDL_GetTicks();
-            if (currentTime - rollStartTime < 1000) {
-                currentDiceRoll = (rand() % 6) + 1;
-            } else {
-                isRolling = false;
-                handleDiceRoll();
-            }
+    if (isRolling) {
+        Uint32 currentTime = SDL_GetTicks();
+        if (currentTime - rollStartTime < 1000) {
+            currentDiceRoll = (rand() % 6) + 1;
+        } else {
+            isRolling = false;
+            handleDiceRoll();
+            waitingForTokenSelection = true;
         }
+    }
+
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer); //Clears the current rendering window 

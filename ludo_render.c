@@ -168,12 +168,31 @@ void renderTextTexture(SDL_Renderer* renderer, SDL_Texture* texture, int x, int 
     SDL_Rect dstRect = {x, y, w, h};
     SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 }
+void TurnDirection() {
+    int direction = rand() % 2;
+    CLOCKWISE = (direction == 1);
+    COUNTERCLOCKWISE = !CLOCKWISE;
+}
+
+int PlayerTurnSelection() {
+    if (StartGame) {
+        PlayerTurn = (rand() % 4) + 1;
+        TurnDirection(); // Set the initial turn direction
+    } else {
+        if (CLOCKWISE) {
+            PlayerTurn = (PlayerTurn % 4) + 1;
+        } else {
+            PlayerTurn = (PlayerTurn - 2 + 4) % 4 + 1;
+        }
+    }
+    return PlayerTurn;
+}
 
 void renderStatistics(SDL_Renderer* renderer) {
     static Uint32 startTime = 0;
     static int startupPhase = 0;
 
-    SDL_Rect statsRect = {BOARD_WIDTH, 0, STATS_WIDTH + 100, WINDOW_HEIGHT};
+    SDL_Rect statsRect = {BOARD_WIDTH, 0, STATS_WIDTH, WINDOW_HEIGHT};
     SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
     SDL_RenderFillRect(renderer, &statsRect);
 
@@ -186,9 +205,11 @@ void renderStatistics(SDL_Renderer* renderer) {
         return;
     }
 
-    if(StartGame) {
+    if (StartGame) {
         if (startTime == 0) {
             startTime = SDL_GetTicks();
+            srand(time(NULL)); // Seed the random number generator
+            PlayerTurnSelection(); // Select initial player and direction
         }
 
         Uint32 currentTime = SDL_GetTicks();
@@ -199,9 +220,10 @@ void renderStatistics(SDL_Renderer* renderer) {
             SDL_Texture* GameStart = renderText(renderer, font, "Game Starting:", textColor0);
             renderTextTexture(renderer, GameStart, BOARD_WIDTH + 10, 10);
             SDL_DestroyTexture(GameStart);
-        } else if (elapsedTime < 6000) {  // Show player selection for another 3 seconds
-            char playerbuffer[50];
-            sprintf(playerbuffer, "Selecting Player Randomly: %d", 2);
+        } else if (elapsedTime < 6000) {  // Show player selection and direction for another 3 seconds
+            char playerbuffer[100];
+            sprintf(playerbuffer, "Starting Player: %d\nDirection: %s", 
+                    PlayerTurn, CLOCKWISE ? "Clockwise" : "Counterclockwise");
             SDL_Color textColor1 = {0, 0, 0, 255};
             SDL_Texture* PlayerSelection = renderText(renderer, font, playerbuffer, textColor1);
             renderTextTexture(renderer, PlayerSelection, BOARD_WIDTH + 10, 30);
@@ -215,16 +237,17 @@ void renderStatistics(SDL_Renderer* renderer) {
         SDL_Texture* titleTexture = renderText(renderer, font, "Statistics:", textColor);
         renderTextTexture(renderer, titleTexture, BOARD_WIDTH + 10, 10);
 
-        char buffer[50];
-        sprintf(buffer, "Dice Rolls: %d %d %d", diceRolls[0], diceRolls[1], diceRolls[2]);
-        SDL_Color diceRollColor = {255, 0, 0, 255};
-        SDL_Texture* diceRollTexture = renderText(renderer, font, buffer, diceRollColor);
-        renderTextTexture(renderer, diceRollTexture, BOARD_WIDTH + 10, 90);
+        char buffer[100];
+        sprintf(buffer, "Current Player: %d \nDirection: %s \nDice Rolls: %d %d %d", 
+                PlayerTurn, CLOCKWISE ? "Clockwise" : "Counterclockwise",
+                diceRolls[0], diceRolls[1], diceRolls[2]);
+        SDL_Color statsColor = {0, 0, 0, 255};
+        SDL_Texture* statsTexture = renderText(renderer, font, buffer, statsColor);
+        renderTextTexture(renderer, statsTexture, BOARD_WIDTH + 10, 50);
 
         SDL_DestroyTexture(titleTexture);
-        SDL_DestroyTexture(diceRollTexture);
+        SDL_DestroyTexture(statsTexture);
     }
-
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int y = -CIRCLE_RADIUS; y <= CIRCLE_RADIUS; y++) {
         for (int x = -CIRCLE_RADIUS; x <= CIRCLE_RADIUS; x++) {

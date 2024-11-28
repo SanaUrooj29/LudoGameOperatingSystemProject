@@ -5,6 +5,7 @@
 
 void loadDiceTextures(SDL_Renderer* renderer);
 void handleDiceRoll();
+void DiscardDiceRoll();
 
 #endif // LUDO_DICE_H
 
