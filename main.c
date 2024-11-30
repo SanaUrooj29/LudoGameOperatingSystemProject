@@ -10,6 +10,8 @@ bool CLOCKWISE = false;
 bool COUNTERCLOCKWISE = false;
 int PlayerTurn = 0;
 
+
+
 int main(int argc, char* argv[]) {
     srand(time(NULL));
 
@@ -91,9 +93,18 @@ int main(int argc, char* argv[]) {
             SDL_GetMouseState(&mouseX, &mouseY);
             
             if (waitingForTokenSelection) {
+                
                 token_selection(&event, diceRolls);
+                printf("hello");
                 if (tokens[PlayerTurn * 4 - 4].moveable || tokens[PlayerTurn * 4 - 3].moveable || 
                     tokens[PlayerTurn * 4 - 2].moveable || tokens[PlayerTurn * 4 - 1].moveable) {
+                    printf("Comming here ");
+                    waitingForTokenSelection = false;
+                    DiscardDiceRoll();
+                    PlayerTurnSelection();
+                }
+                else
+                {
                     waitingForTokenSelection = false;
                     DiscardDiceRoll();
                     PlayerTurnSelection();
@@ -107,6 +118,7 @@ int main(int argc, char* argv[]) {
                     if (canRollAgain) {
                         isRolling = true;
                         rollStartTime = SDL_GetTicks();
+                        printf("hello");
                     }
                 }
             }
@@ -120,6 +132,7 @@ int main(int argc, char* argv[]) {
         } else {
             isRolling = false;
             handleDiceRoll();
+            printf("wait");
             waitingForTokenSelection = true;
         }
     }

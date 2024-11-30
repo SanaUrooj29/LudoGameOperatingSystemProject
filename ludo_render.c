@@ -124,7 +124,7 @@ void renderBoard(SDL_Renderer* renderer, SDL_Texture* starTexture) {
 }
 
 void renderTokens(SDL_Renderer* renderer, SDL_Texture* redToken, SDL_Texture* greenToken, SDL_Texture* blueToken, SDL_Texture* yellowToken) {
-    SDL_Texture* tokenTextures[] = {redToken, greenToken, blueToken, yellowToken};
+    SDL_Texture* tokenTextures[] = {redToken, greenToken, yellowToken, blueToken };
 
     for (int i = 0; i < 16; i++) {
         SDL_Rect tokenRect = {

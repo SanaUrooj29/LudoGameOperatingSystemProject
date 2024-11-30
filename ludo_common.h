@@ -40,6 +40,9 @@ typedef struct {
     int x, y;
     SDL_Color color;
     bool moveable;
+    bool onBoard;
+    int pathPosition;
+    bool isCaptured;
 } Token;
 
 extern CellType board[BOARD_SIZE][BOARD_SIZE];

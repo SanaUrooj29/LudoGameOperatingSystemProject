@@ -39,6 +39,7 @@ void handleDiceRoll() {
         rollCount++;
 
         if (currentDiceRoll != 6 || rollCount == 3) {
+        printf("hellobro");
         }
 
         if (rollCount == 3 && diceRolls[0] == 6 && diceRolls[1] == 6 && diceRolls[2] == 6) {

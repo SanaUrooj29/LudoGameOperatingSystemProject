@@ -64,7 +64,7 @@ void initializeBoard() {
     }
 
     // Starting Points of Tokens
-    board[6][1] = RED_CELL;
+    board[6][1] =RED_CELL ;
     board[13][6] = BLUE_CELL;
     board[1][8] = GREEN_CELL;
     board[8][13] = YELLOW_CELL;
