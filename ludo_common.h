@@ -43,6 +43,7 @@ typedef struct {
     bool onBoard;
     int pathPosition;
     bool isCaptured;
+    bool hasCaptured;
 } Token;
 
 extern CellType board[BOARD_SIZE][BOARD_SIZE];

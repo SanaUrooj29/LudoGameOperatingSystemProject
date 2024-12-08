@@ -16,4 +16,4 @@ To run the program (Run in Sequential Order):
 
 gcc -c main.c ludo_board.c ludo_tokens.c ludo_dice.c ludo_render.c
 gcc -o ludo_game main.c ludo_board.c ludo_tokens.c ludo_dice.c ludo_render.c -lSDL2 -lSDL2_image -lSDL2_ttf -lm
- ./ludo_game
+./ludo_game

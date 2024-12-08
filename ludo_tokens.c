@@ -6,21 +6,41 @@ Token tokens[16];
 int tokenIndex = 0;
 
 // Define the paths for each color
-const int PATH_LENGTH = 52;
-const int MAIN_PATH[52][2] = {
+const int RED_PATH[57][2] = {
     {1,6}, {2,6}, {3,6}, {4,6}, {5,6}, {6,5}, {6,4}, {6,3}, {6,2}, {6,1}, {6,0},
     {7,0}, {8,0}, {8,1}, {8,2}, {8,3}, {8,4}, {8,5}, {9,6}, {10,6}, {11,6}, {12,6},
     {13,6}, {14,6}, {14,7}, {14,8}, {13,8}, {12,8}, {11,8}, {10,8}, {9,8}, {8,9},
     {8,10}, {8,11}, {8,12}, {8,13}, {8,14}, {7,14}, {6,14}, {6,13}, {6,12}, {6,11},
-    {6,10}, {6,9}, {5,8}, {4,8}, {3,8}, {2,8}, {1,8}, {0,8}, {0,7}, {0,6}
+    {6,10}, {6,9}, {5,8}, {4,8}, {3,8}, {2,8}, {1,8}, {0,8}, {0,7}, 
+    {1,7}, {2,7}, {3,7}, {4,7}, {5,7}, {6,7}
 };
 
-// Define home row paths for each color
-const int HOME_ROW_LENGTH = 6;
-const int RED_HOME_ROW[6][2] = {{1,7}, {2,7}, {3,7}, {4,7}, {5,7}, {6,7}};
-const int GREEN_HOME_ROW[6][2] = {{7,1}, {7,2}, {7,3}, {7,4}, {7,5}, {7,6}};
-const int YELLOW_HOME_ROW[6][2] = {{13,7}, {12,7}, {11,7}, {10,7}, {9,7}, {8,7}};
-const int BLUE_HOME_ROW[6][2] = {{7,13}, {7,12}, {7,11}, {7,10}, {7,9}, {7,8}};
+const int GREEN_PATH[57][2] = {
+    {8,1}, {8,2}, {8,3}, {8,4}, {8,5}, {9,6}, {10,6}, {11,6}, {12,6}, {13,6}, {14,6},
+    {14,7}, {14,8}, {13,8}, {12,8}, {11,8}, {10,8}, {9,8}, {8,9}, {8,10}, {8,11}, {8,12},
+    {8,13}, {8,14}, {7,14}, {6,14}, {6,13}, {6,12}, {6,11}, {6,10}, {6,9}, {5,8},
+    {4,8}, {3,8}, {2,8}, {1,8}, {0,8}, {0,7}, {0,6}, {1,6}, {2,6}, {3,6},
+    {4,6}, {5,6}, {6,5}, {6,4}, {6,3}, {6,2}, {6,1}, {6,0}, {7,0}, 
+    {7,1}, {7,2}, {7,3}, {7,4}, {7,5}, {7,6}
+};
+
+const int YELLOW_PATH[57][2] = {
+    {13,8}, {12,8}, {11,8}, {10,8}, {9,8}, {8,9}, {8,10}, {8,11}, {8,12}, {8,13}, {8,14},
+    {7,14}, {6,14}, {6,13}, {6,12}, {6,11}, {6,10}, {6,9}, {5,8}, {4,8}, {3,8}, {2,8},
+    {1,8}, {0,8}, {0,7}, {0,6}, {1,6}, {2,6}, {3,6}, {4,6}, {5,6}, {6,5},
+    {6,4}, {6,3}, {6,2}, {6,1}, {6,0}, {7,0}, {8,0}, {8,1}, {8,2}, {8,3},
+    {8,4}, {8,5}, {9,6}, {10,6}, {11,6}, {12,6}, {13,6}, {14,6}, {14,7}, 
+    {13,7}, {12,7}, {11,7}, {10,7}, {9,7}, {8,7}
+};
+
+const int BLUE_PATH[57][2] = {
+    {6,13}, {6,12}, {6,11}, {6,10}, {6,9}, {5,8}, {4,8}, {3,8}, {2,8}, {1,8}, {0,8},
+    {0,7}, {0,6}, {1,6}, {2,6}, {3,6}, {4,6}, {5,6}, {6,5}, {6,4}, {6,3}, {6,2},
+    {6,1}, {6,0}, {7,0}, {8,0}, {8,1}, {8,2}, {8,3}, {8,4}, {8,5}, {9,6},
+    {10,6}, {11,6}, {12,6}, {13,6}, {14,6}, {14,7}, {14,8}, {13,8}, {12,8}, {11,8},
+    {10,8}, {9,8}, {8,9}, {8,10}, {8,11}, {8,12}, {8,13}, {8,14}, {7,14}, 
+    {7,13}, {7,12}, {7,11}, {7,10}, {7,9}, {7,8}
+};
 
 void initializeTokens() {
     // Red tokens
@@ -32,7 +52,9 @@ void initializeTokens() {
             .moveable = false,
             .onBoard = false,
             .pathPosition = -1,
-            .isCaptured = false // Added: Initialize isCaptured to false
+            .isCaptured = false ,// Added: Initialize isCaptured to false
+            .hasCaptured = false // Added: Initialize isCaptured to false
+
         };
     }
 
@@ -45,7 +67,8 @@ void initializeTokens() {
             .moveable = false,
             .onBoard = false,
             .pathPosition = -1,
-            .isCaptured = false // Added: Initialize isCaptured to false
+            .isCaptured = false,
+            .hasCaptured = false  // Added: Initialize isCaptured to false
         };
     }
 
@@ -58,7 +81,8 @@ void initializeTokens() {
             .moveable = false,
             .onBoard = false,
             .pathPosition = -1,
-            .isCaptured = false // Added: Initialize isCaptured to false
+            .isCaptured = false,
+            .hasCaptured = false  // Added: Initialize isCaptured to false
         };
     }
 
@@ -71,7 +95,8 @@ void initializeTokens() {
             .moveable = false,
             .onBoard = false,
             .pathPosition = -1,
-            .isCaptured = false // Added: Initialize isCaptured to false
+            .isCaptured = false,
+            .hasCaptured = false  // Added: Initialize isCaptured to false
         };
     }
     for (int i = 0; i < 16; i++) {
@@ -82,6 +107,9 @@ void initializeTokens() {
 bool isInsideRect(int x, int y, SDL_Rect* rect) {
     return (x >= rect->x && x < rect->x + rect->w &&
             y >= rect->y && y < rect->y + rect->h);
+}
+int getStartingPathIndex(SDL_Color color) {
+    return 0; // All paths now start at index 0
 }
 
 void getPlayerTokenRange(int playerTurn, int* start, int* end) {
@@ -108,54 +136,43 @@ void getStartingPosition(SDL_Color color, int* startX, int* startY) {
     }
 }
 
-int getStartingPathIndex(SDL_Color color) {
-    if (color.r == 255 && color.g == 0 && color.b == 0) return 0;        // Red
-    if (color.r == 0 && color.g == 255 && color.b == 0) return 13;       // Green
-    if (color.r == 255 && color.g == 255 && color.b == 0) return 26;     // Yellow
-    if (color.r == 0 && color.g == 0 && color.b == 255) return 39;       // Blue
-    return 0; // Default to Red's starting position
-}
-
-bool can_move_token(Token* token, int diceRoll[]) {
-    if (!token->onBoard) {
-        // Token can only move onto the board if a 6 is rolled
-        return (diceRoll[0] == 6 || diceRoll[1] == 6 || diceRoll[2] == 6);
-    }
-    // If the token is already on the board, it can always move
-    return true;
-}
-
 void moveTokenAlongPath(Token* token, int steps) {
-    int totalSteps = token->pathPosition + steps;
-    
-    // Check if the token is entering or moving within its home row
-    if (totalSteps >= PATH_LENGTH) {
-        int homeRowSteps = totalSteps - PATH_LENGTH;
-        const int (*homeRow)[2];
-        
-        if (token->color.r == 255 && token->color.g == 0 && token->color.b == 0) homeRow = RED_HOME_ROW;
-        else if (token->color.r == 0 && token->color.g == 255 && token->color.b == 0) homeRow = GREEN_HOME_ROW;
-        else if (token->color.r == 255 && token->color.g == 255 && token->color.b == 0) homeRow = YELLOW_HOME_ROW;
-        else homeRow = BLUE_HOME_ROW;
-        
-        if (homeRowSteps < HOME_ROW_LENGTH) {
-            token->x = homeRow[homeRowSteps][0] * CELL_SIZE;
-            token->y = homeRow[homeRowSteps][1] * CELL_SIZE;
-            token->pathPosition = PATH_LENGTH + homeRowSteps;
-        } else {
-            // Token has reached or passed the final position in home row
-            token->x = homeRow[HOME_ROW_LENGTH - 1][0] * CELL_SIZE;
-            token->y = homeRow[HOME_ROW_LENGTH - 1][1] * CELL_SIZE;
-            token->pathPosition = PATH_LENGTH + HOME_ROW_LENGTH - 1;
-        }
+    const int (*path)[2];
+    int pathLength;
+
+    // Select the appropriate path based on token color
+    if (token->color.r == 255 && token->color.g == 0 && token->color.b == 0) {
+        path = RED_PATH;
+        pathLength = sizeof(RED_PATH) / sizeof(RED_PATH[0]);
+    } else if (token->color.r == 0 && token->color.g == 255 && token->color.b == 0) {
+        path = GREEN_PATH;
+        pathLength = sizeof(GREEN_PATH) / sizeof(GREEN_PATH[0]);
+    } else if (token->color.r == 255 && token->color.g == 255 && token->color.b == 0) {
+        path = YELLOW_PATH;
+        pathLength = sizeof(YELLOW_PATH) / sizeof(YELLOW_PATH[0]);
     } else {
-        // Move along the main path
-        int newPosition = totalSteps % PATH_LENGTH;
-        token->x = MAIN_PATH[newPosition][0] * CELL_SIZE;
-        token->y = MAIN_PATH[newPosition][1] * CELL_SIZE;
-        token->pathPosition = newPosition;
+        path = BLUE_PATH;
+        pathLength = sizeof(BLUE_PATH) / sizeof(BLUE_PATH[0]);
     }
-    // After moving the token, check for captures
+
+    int newPosition = token->pathPosition + steps;
+
+    // Check if the new position is in or past the home row
+    if (newPosition >= pathLength - 6) {
+        if (!token->hasCaptured) {
+            // If the token hasn't captured and is trying to enter home row, don't move
+            return;
+        }
+        // If the token has captured, allow it to move, but cap it at the last position
+        newPosition = (newPosition >= pathLength) ? pathLength - 1 : newPosition;
+    }
+
+    // Update token position
+    token->pathPosition = newPosition;
+    token->x = path[newPosition][0] * CELL_SIZE;
+    token->y = path[newPosition][1] * CELL_SIZE;
+
+    // Check for captures (existing code)
     for (int i = 0; i < 16; i++) {
         if (&tokens[i] != token && tokens[i].onBoard && !tokens[i].isCaptured &&
             tokens[i].x == token->x && tokens[i].y == token->y) {
@@ -167,7 +184,7 @@ void moveTokenAlongPath(Token* token, int steps) {
                 board[cellY][cellX] != GREEN_SAFE_CELL && 
                 board[cellY][cellX] != YELLOW_SAFE_CELL && 
                 board[cellY][cellX] != BLUE_SAFE_CELL) {
-                captureToken(&tokens[i]);
+                captureToken(&tokens[i], i, PlayerTurn);
             }
         }
     }
@@ -185,21 +202,23 @@ void token_movement(int Tokens_Index, int diceRolls[]) {
         }
     }
 
-    if (!token->onBoard) {
-        if (diceRolls[0] == 6 || diceRolls[1] == 6 || diceRolls[2] == 6) {
+    if (!token->onBoard) { // if no token for that player is onboard
+        if (diceRolls[0] == 6 || diceRolls[1] == 6 || diceRolls[2] == 6) // if player rolls a 6 
+        {
             int startX, startY;
             getStartingPosition(token->color, &startX, &startY);
             token->x = startX * CELL_SIZE;
-            token->y = startY * CELL_SIZE;
+            token->y = startY *CELL_SIZE;
             token->onBoard = true;
             token->pathPosition = getStartingPathIndex(token->color);
-            totalSteps--;  // Reduce one step for moving onto the board
+            return;
+            
         } else {
             return;  // Can't move if not on board and didn't roll a 6
         }
     }
 
-    if (totalSteps > 0) {
+    if (totalSteps > 0 && can_move_token(token, diceRolls)) {
         moveTokenAlongPath(token, totalSteps);
     }
 
@@ -209,7 +228,78 @@ void token_movement(int Tokens_Index, int diceRolls[]) {
     }
 }
 
-void captureToken(Token* capturedToken) {
+void token_selection(SDL_Event* event, int diceRoll[]) {
+    if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT) {
+        int mouseX = event->button.x;
+        int mouseY = event->button.y;
+
+        int tokenStart, tokenEnd;
+        getPlayerTokenRange(PlayerTurn, &tokenStart, &tokenEnd);
+
+        for (int i = tokenStart; i < tokenEnd; i++) {
+            SDL_Rect tokenRect = {
+                tokens[i].x + (CELL_SIZE - TOKEN_SIZE) / 2,
+                tokens[i].y + (CELL_SIZE - TOKEN_SIZE) / 2,
+                TOKEN_SIZE,
+                TOKEN_SIZE
+            };
+
+            if (isInsideRect(mouseX, mouseY, &tokenRect)) {
+                if (can_move_token(&tokens[i], diceRoll)) {
+                    token_movement(i, diceRoll);
+                    return ;
+                } else {
+                    printf("This token cannot be moved\n");
+                    return ;
+                }
+            }
+        }
+    }
+    return ;
+}
+bool can_move_token(Token* token, int diceRoll[]) {
+    if (!token->onBoard) {
+        // Token can only move onto the board if a 6 is rolled
+        return (diceRoll[0] == 6 || diceRoll[1] == 6 || diceRoll[2] == 6);
+    }
+    // If the token is already on the board, it can always move
+    return true;
+}
+
+bool can_move_any_token(int playerTurn, int diceRoll[]) {
+    int tokenStart, tokenEnd;
+    getPlayerTokenRange(playerTurn, &tokenStart, &tokenEnd);
+
+    for (int i = tokenStart; i < tokenEnd; i++) {
+        if (can_move_token(&tokens[i], diceRoll)) { //Use the first dice roll
+            return true;
+        }
+    }
+    return false;
+}
+
+void captureToken(Token* capturedToken, int tokenindex,int PlayerTurn) {
+    
+    int startrange;
+    int endrange;
+    bool playersToken = false;
+
+    getPlayerTokenRange(PlayerTurn, &startrange,&endrange);
+    for(int i = startrange; i < endrange; i++)
+    {
+        if(i == tokenindex)
+        {
+            playersToken = true;
+        }
+    }
+
+    if(playersToken == false)
+    {
+    int startRange, endRange;
+    getPlayerTokenRange(PlayerTurn, &startRange, &endRange);
+    for (int i = startRange; i < endRange; i++) {
+        tokens[i].hasCaptured = true;
+    }
     capturedToken->isCaptured = true;
     capturedToken->onBoard = false;
     capturedToken->pathPosition = -1;
@@ -236,35 +326,5 @@ void captureToken(Token* capturedToken) {
             capturedToken->y = CELL_SIZE * (tokenInPlayerIndex < 2 ? 10 : 13);
             break;
     }
-}
-
-void token_selection(SDL_Event* event, int diceRoll[]) {
-    if (event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT) {
-        int mouseX = event->button.x;
-        int mouseY = event->button.y;
-
-        int tokenStart, tokenEnd;
-        getPlayerTokenRange(PlayerTurn, &tokenStart, &tokenEnd);
-
-        for (int i = tokenStart; i < tokenEnd; i++) {
-            SDL_Rect tokenRect = {
-                tokens[i].x + (CELL_SIZE - TOKEN_SIZE) / 2,
-                tokens[i].y + (CELL_SIZE - TOKEN_SIZE) / 2,
-                TOKEN_SIZE,
-                TOKEN_SIZE
-            };
-
-            if (isInsideRect(mouseX, mouseY, &tokenRect)) {
-                if (can_move_token(&tokens[i], diceRoll)) {
-                    tokens[i].moveable = true;
-                    token_movement(i, diceRoll);
-                    printf("Token %d selected and moved\n", i);
-                    return;
-                } else {
-                    printf("This token cannot be moved\n");
-                    return;
-                }
-            }
-        }
     }
 }

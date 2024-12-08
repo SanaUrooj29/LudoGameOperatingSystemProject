@@ -222,8 +222,9 @@ void renderStatistics(SDL_Renderer* renderer) {
             SDL_DestroyTexture(GameStart);
         } else if (elapsedTime < 6000) {  // Show player selection and direction for another 3 seconds
             char playerbuffer[100];
-            sprintf(playerbuffer, "Starting Player: %d\nDirection: %s", 
-                    PlayerTurn, CLOCKWISE ? "Clockwise" : "Counterclockwise");
+            sprintf(playerbuffer, "Starting Player: %d",
+                    PlayerTurn);
+            
             SDL_Color textColor1 = {0, 0, 0, 255};
             SDL_Texture* PlayerSelection = renderText(renderer, font, playerbuffer, textColor1);
             renderTextTexture(renderer, PlayerSelection, BOARD_WIDTH + 10, 30);
@@ -237,16 +238,31 @@ void renderStatistics(SDL_Renderer* renderer) {
         SDL_Texture* titleTexture = renderText(renderer, font, "Statistics:", textColor);
         renderTextTexture(renderer, titleTexture, BOARD_WIDTH + 10, 10);
 
-        char buffer[100];
-        sprintf(buffer, "Current Player: %d \nDirection: %s \nDice Rolls: %d %d %d", 
-                PlayerTurn, CLOCKWISE ? "Clockwise" : "Counterclockwise",
+        char Playerbuffer[100];
+        char Directionbuffer[100];
+        char Dicebuffer[100];
+        sprintf(Playerbuffer, "Current Player: %d", 
+                PlayerTurn);
+        SDL_Color PlayerColor = {0, 0, 0, 255};
+        SDL_Texture* PlayerTexture = renderText(renderer, font, Playerbuffer, PlayerColor);
+        renderTextTexture(renderer, PlayerTexture, BOARD_WIDTH + 10, 50);
+        sprintf(Directionbuffer, "Direction: %s", 
+                CLOCKWISE ? "Clockwise" : "Counterclockwise"
+                );
+        SDL_Color DirectionColor = {0, 0, 0, 255};
+        SDL_Texture* DirectionTexture = renderText(renderer, font, Directionbuffer, DirectionColor);
+        renderTextTexture(renderer, DirectionTexture, BOARD_WIDTH + 10, 90);
+        
+        sprintf(Dicebuffer, "Dice Rolls: %d %d %d",
                 diceRolls[0], diceRolls[1], diceRolls[2]);
-        SDL_Color statsColor = {0, 0, 0, 255};
-        SDL_Texture* statsTexture = renderText(renderer, font, buffer, statsColor);
-        renderTextTexture(renderer, statsTexture, BOARD_WIDTH + 10, 50);
+        SDL_Color DiceColor = {0, 0, 0, 255};
+        SDL_Texture* diceTexture = renderText(renderer, font, Dicebuffer, DiceColor);
+        renderTextTexture(renderer, diceTexture, BOARD_WIDTH + 10, 130);
 
         SDL_DestroyTexture(titleTexture);
-        SDL_DestroyTexture(statsTexture);
+        SDL_DestroyTexture(PlayerTexture);
+        SDL_DestroyTexture(diceTexture);
+        SDL_DestroyTexture(DirectionTexture);
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     for (int y = -CIRCLE_RADIUS; y <= CIRCLE_RADIUS; y++) {

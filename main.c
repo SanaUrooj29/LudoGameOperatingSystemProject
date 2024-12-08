@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
                 printf("hello");
                 if (tokens[PlayerTurn * 4 - 4].moveable || tokens[PlayerTurn * 4 - 3].moveable || 
                     tokens[PlayerTurn * 4 - 2].moveable || tokens[PlayerTurn * 4 - 1].moveable) {
-                    printf("Comming here ");
+                    
                     waitingForTokenSelection = false;
                     DiscardDiceRoll();
                     PlayerTurnSelection();
