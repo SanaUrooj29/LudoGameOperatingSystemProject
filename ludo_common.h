@@ -61,6 +61,7 @@ extern int Players[4];
 extern int PlayerTurn;
 extern bool CLOCKWISE;
 extern bool COUNTERCLOCKWISE;
-
+extern int winners[4] ;  
+extern int winnerCount;
 #endif // LUDO_COMMON_H
 

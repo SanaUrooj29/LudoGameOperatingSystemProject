@@ -1,6 +1,7 @@
 #include "ludo_common.h"
 #include "ludo_tokens.h"
 #include "ludo_board.h"
+#include <stdbool.h>
 
 Token tokens[16];
 int tokenIndex = 0;
@@ -41,6 +42,37 @@ const int BLUE_PATH[57][2] = {
     {10,8}, {9,8}, {8,9}, {8,10}, {8,11}, {8,12}, {8,13}, {8,14}, {7,14}, 
     {7,13}, {7,12}, {7,11}, {7,10}, {7,9}, {7,8}
 };
+
+
+
+int winners[4] = {-1, -1, -1, -1};  
+int winnerCount = 0;
+
+// Add this function to check if a player has won
+bool checkPlayerWin(int playerIndex) {
+    int startRange, endRange;
+    getPlayerTokenRange(playerIndex, &startRange, &endRange);
+    
+    for (int i = startRange; i < endRange; i++) {
+        if (tokens[i].pathPosition != 57) {  // Assuming 57 is the final position in the home
+            return false;
+        }
+    }
+    return true;
+}
+
+// Add this function to handle player winning
+void handlePlayerWin(int playerIndex) {
+    if (winnerCount < 4) {
+        winners[winnerCount] = playerIndex;
+        winnerCount++;
+        printf("Player %d has won! They are in position %d\n", playerIndex + 1, winnerCount);
+    }
+}
+// Add this function to check if the game is over
+bool isGameOver() {
+    return winnerCount == 3;  // Game is over when 3 players have won
+}
 
 void initializeTokens() {
     // Red tokens
@@ -187,6 +219,11 @@ void moveTokenAlongPath(Token* token, int steps) {
                 captureToken(&tokens[i], i, PlayerTurn);
             }
         }
+    }
+     // Check if the player has won
+    int playerIndex = (token - tokens) / 4;
+    if (checkPlayerWin(playerIndex)) {
+        handlePlayerWin(playerIndex);
     }
 }
 

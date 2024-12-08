@@ -4,7 +4,6 @@
 #include "ludo_dice.h"
 #include "ludo_render.h"
 
-
 bool StartGame = true;
 bool CLOCKWISE = false;
 bool COUNTERCLOCKWISE = false;
@@ -84,7 +83,7 @@ int main(int argc, char* argv[]) {
     // PollEvents-> Listens to all the events in the game
     // Main Methods -> RenderClear() and RenderPresent()
     
-    while (!quit) {
+    while (!quit && !isGameOver()) {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             quit = true;
@@ -144,6 +143,17 @@ int main(int argc, char* argv[]) {
         renderStatistics(renderer);
         renderTokens(renderer, redToken, greenToken, blueToken, yellowToken);
         SDL_RenderPresent(renderer); //Renders all the changes since the past render call
+        if (isGameOver()) {
+            SDL_Delay(5000);  // Display the final result for 5 seconds before quitting
+            quit = true;
+        }
+        
+    }
+    if (isGameOver()) {
+        printf("Game Over!\n");
+        for (int i = 0; i < 3; i++) {
+            printf("%d place: Player %d\n", i + 1, winners[i] + 1);
+        }
     }
 
     for (int i = 0; i < 6; i++) {

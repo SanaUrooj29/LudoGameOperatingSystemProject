@@ -11,5 +11,9 @@ void captureToken(Token* capturedToken, int tokenindex, int Playerturn);
 bool can_move_any_token(int playerTurn, int diceRoll[]);
 void getPlayerTokenRange(int playerTurn, int* start, int* end);
 bool isInsideRect(int x, int y, SDL_Rect* rect);
+bool checkPlayerWin(int playerIndex);
+void handlePlayerWin(int playerIndex);
+bool isGameOver();
+
 #endif // LUDO_TOKENS_H
 

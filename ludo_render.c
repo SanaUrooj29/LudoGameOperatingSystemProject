@@ -2,6 +2,7 @@
 #include "unistd.h"
 #include "ludo_render.h"
 
+
 void drawCircle(SDL_Renderer* renderer, int centerX, int centerY, int radius) {
     for (int w = 0; w < radius * 2; w++) {
         for (int h = 0; h < radius * 2; h++) {
@@ -122,6 +123,8 @@ void renderBoard(SDL_Renderer* renderer, SDL_Texture* starTexture) {
 
     renderCenterTriangles(renderer);
 }
+
+
 
 void renderTokens(SDL_Renderer* renderer, SDL_Texture* redToken, SDL_Texture* greenToken, SDL_Texture* blueToken, SDL_Texture* yellowToken) {
     SDL_Texture* tokenTextures[] = {redToken, greenToken, yellowToken, blueToken };
@@ -258,6 +261,18 @@ void renderStatistics(SDL_Renderer* renderer) {
         SDL_Color DiceColor = {0, 0, 0, 255};
         SDL_Texture* diceTexture = renderText(renderer, font, Dicebuffer, DiceColor);
         renderTextTexture(renderer, diceTexture, BOARD_WIDTH + 10, 130);
+
+        int yOffset = 170;  
+        for (int i = 0; i <= winnerCount; i++) {
+        char winnerBuffer[100];
+        sprintf(winnerBuffer, "%d place: Player %d", i + 1, winners[i] + 1);
+        SDL_Color winnerColor = {0, 0, 0, 255};
+        SDL_Texture* winnerTexture = renderText(renderer, font, winnerBuffer, winnerColor);
+        renderTextTexture(renderer, winnerTexture, BOARD_WIDTH + 10, yOffset);
+        yOffset += 40;  // Adjust spacing between winner lines
+        SDL_DestroyTexture(winnerTexture);
+
+        }
 
         SDL_DestroyTexture(titleTexture);
         SDL_DestroyTexture(PlayerTexture);
